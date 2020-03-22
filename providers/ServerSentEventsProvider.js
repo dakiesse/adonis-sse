@@ -73,15 +73,27 @@ class ServerSentEventsProvider extends ServiceProvider {
    * @return {void}
    */
   boot () {
+    const app = this.app
     const HttpContext = this.app.use('Adonis/Src/HttpContext')
-    const source = this.app.use('Adonis/Src/EventSource')
+    const map = new Map
+
     /**
      * Adding getter to the HTTP context. Please note the queue
      * instance...
      */
     HttpContext.getter('source', function () { // A NEW SOURCE INSTANCE ON EVERY REQUEST [HTTP]
+      const user = this._auth_.authenticatorInstance._instanceUser
+
       if ((this.request.header('Accept') || '').indexOf('text/event-stream') > -1) {
-        return source
+        const source = app.use('Adonis/Src/EventSource')
+
+        if (user) {
+          map.set(user.id, source)
+        }
+      }
+
+      if (user && map.has(user.id)) {
+        return map.get(user.id)
       } else {
         return { send: function () {} }
       }
