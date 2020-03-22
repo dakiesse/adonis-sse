@@ -9,10 +9,10 @@ class EventSourceWatcher {
     let middlewareFunc = null
     /* eslint-disable no-unused-vars */
     try {
-      let isIE = (request.hasHeader('ua-cpu') || ((request.header('user-agent', 'unknown')).match(/Trident [\d]{1}/g) !== null))
+      // let isIE = (request.hasHeader('ua-cpu') || ((request.header('user-agent', 'unknown')).match(/Trident [\d]{1}/g) !== null))
 
       middlewareFunc = this.stream.setup(source, {
-        is_ie_req: isIE
+        is_ie_req: false
       })
     } catch (err) {
       middlewareFunc = (req, res, nex) => nex()
